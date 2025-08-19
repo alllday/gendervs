@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### FETCH_HEAD ###
+FETCH_HEAD

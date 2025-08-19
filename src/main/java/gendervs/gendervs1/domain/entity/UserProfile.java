@@ -1,4 +1,4 @@
-package gendervs.gendervs1.entity;
+package gendervs.gendervs1.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_profile")
+@Table(name = "user_profiles")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,26 +15,24 @@ public class UserProfile {
 
     @Id
     @Column(name = "user_id")
-    private Long userId;
+    private Long userId; // real PK
 
     @OneToOne
-    @MapsId
+    @MapsId // PK와 FK를 같은 컬럼으로 매핑
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user; // 연관관계
 
-    @Column(name = "nickname", nullable = false, unique = true, length = 30)
+    @Column(nullable = false, unique = true, length = 30)
     private String nickname;
 
-    @Column(name = "score")
     private Integer score = 0;
 
-    @Column(name = "gender", nullable = false, length = 1)
+    @Column(nullable = false, length = 1)
     private String gender;
 
-    @Column(name = "birth", nullable = false)
+    @Column(nullable = false)
     private LocalDate birth;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
 

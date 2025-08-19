@@ -1,11 +1,11 @@
-package gendervs.gendervs1.entity;
+package gendervs.gendervs1.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_position")
+@Table(name = "user_positions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,7 +14,6 @@ public class UserPosition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_position_id")
     private Long userPositionId;
 
     @ManyToOne
@@ -29,17 +28,15 @@ public class UserPosition {
     @JoinColumn(name = "position_id")
     private TopicPosition position;
 
-    @Column(name = "selected_at")
     private LocalDateTime selectedAt;
 
-    @Column(name = "is_current")
     private Boolean isCurrent = true;
 
-    @Column(name = "reason", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String reason;
 
     @ManyToOne
     @JoinColumn(name = "reason_post_id")
-    private Post reasonPost;
+    private Post post;
 }
 

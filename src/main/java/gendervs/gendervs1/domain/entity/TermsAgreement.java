@@ -1,11 +1,11 @@
-package gendervs.gendervs1.entity;
+package gendervs.gendervs1.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "terms_agreement")
+@Table(name = "terms_agreements")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,17 +14,15 @@ public class TermsAgreement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "agreement_id")
     private Long agreementId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "terms_type", nullable = false, length = 20)
+    @Column(nullable = false, length = 20)
     private String termsType;
 
-    @Column(name = "agreed_at")
     private LocalDateTime agreedAt;
 }
 
