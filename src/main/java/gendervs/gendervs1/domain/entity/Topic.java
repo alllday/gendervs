@@ -27,7 +27,7 @@ public class Topic {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     private LocalDateTime createdAt;
 

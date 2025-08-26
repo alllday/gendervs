@@ -3,6 +3,7 @@ package gendervs.gendervs1.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -42,6 +43,5 @@ public class User { // 일단 현재 단방향
     private Boolean isAdmin = false;
 
     private LocalDateTime lastLogin;
-
 }
 
