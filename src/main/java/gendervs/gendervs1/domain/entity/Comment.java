@@ -1,7 +1,12 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.ContentStatus;
+import gendervs.gendervs1.domain.enums.PositionCode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,19 +38,23 @@ public class Comment {
 
     private Integer depth = 1;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     private Integer likeCount = 0;
 
     private Integer dislikeCount = 0;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    private String status = "active";
+    private ContentStatus contentStatus = ContentStatus.ACTIVE;
 
-    @Column(nullable = false, length = 1)
-    private String originPosition;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private PositionCode positionCode = null;
 
     private Boolean isEditable = true;
 }

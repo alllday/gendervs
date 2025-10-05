@@ -1,7 +1,11 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.ActionType;
+import gendervs.gendervs1.domain.enums.TargetType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,23 +18,26 @@ public class AdminLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long logId;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private User admin;
+    @JoinColumn(name = "user_id")
+    private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String actionType;
+    private ActionType actionType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String targetType;
+    private TargetType targetType;
 
     private Long targetId;
 
     @Column(length = 100)
     private String reason;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 }
 

@@ -2,6 +2,8 @@ package gendervs.gendervs1.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,7 +27,7 @@ public class UserProfile {
     @Column(nullable = false, unique = true, length = 30)
     private String nickname;
 
-    private Integer score = 0;
+    private int score = 0;
 
     @Column(nullable = false, length = 1)
     private String gender;
@@ -33,6 +35,7 @@ public class UserProfile {
     @Column(nullable = false)
     private LocalDate birth;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
 

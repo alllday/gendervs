@@ -1,7 +1,10 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.FileType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,9 +26,11 @@ public class PostAttachment {
     @Column(nullable = false, length = 255)
     private String fileUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String fileType;
+    private FileType fileType;
 
+    @CreationTimestamp
     private LocalDateTime uploadedAt;
 }
 

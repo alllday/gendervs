@@ -1,7 +1,10 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.TermsType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,9 +23,11 @@ public class TermsAgreement {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String termsType;
+    private TermsType termsType;
 
+    @CreationTimestamp
     private LocalDateTime agreedAt;
 }
 

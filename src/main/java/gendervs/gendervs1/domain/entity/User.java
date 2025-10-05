@@ -1,7 +1,11 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.ContentStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,11 +36,15 @@ public class User { // 일단 현재 단방향
     @Column(nullable = false, unique = true, length = 64)
     private String phoneHash;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    private Boolean status = true;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private ContentStatus contentStatus = ContentStatus.ACTIVE;
 
     private LocalDateTime suspendUntil;
 

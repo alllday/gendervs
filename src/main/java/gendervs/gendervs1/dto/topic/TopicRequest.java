@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class TopicUpdateRequest {
+public class TopicRequest { // Create and Update Request DTO
     
     @NotBlank(message = "제목은 필수입니다")
     @Size(max = 100, message = "제목은 100자를 초과할 수 없습니다")
@@ -17,4 +17,5 @@ public class TopicUpdateRequest {
     @NotBlank(message = "카테고리는 필수입니다")
     @Size(max = 20, message = "카테고리는 20자를 초과할 수 없습니다")
     private String category;
+
 }

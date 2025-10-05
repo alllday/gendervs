@@ -1,0 +1,80 @@
+| 테이블              | 필드              | Enum             |
+  |------------------|-----------------|------------------|
+  | users            | status          | ContentStatus    |
+  | terms_agreements | terms_type      | TermsType        |
+  | topics           | category        | TopicCategory    |
+  | topics           | status          | ContentStatus    |
+  | user_positions   | position_code   | PositionCode     |
+  | posts            | position_code   | PositionCode     |
+  | posts            | category        | PostCategory     |
+  | posts            | status          | ContentStatus    |
+  | post_attachments | file_type       | FileType         |
+  | comments         | status          | ContentStatus    |
+  | comments         | position_code   | PositionCode     |
+  | votes            | target_type     | TargetType       |
+  | votes            | vote_type       | VoteType         |
+  | reports          | target_type     | TargetType       |
+  | reports          | reason_code     | ReasonCode       |
+  | admin_logs       | action_type     | ActionType       |
+  | admin_logs       | target_type     | TargetType       |
+
+   ## Enum 정의
+
+    ### TargetType
+    - `TOPIC`: 논제
+    - `POST`: 게시글
+    - `COMMENT`: 댓글
+    - `USER`: 사용자 // vote에서는 사용 x
+
+    ### VoteType
+    - `LIKE`: 추천
+    - `DISLIKE`: 비추천
+
+    ### PositionCode
+    - `POSITIVE`: 긍정
+    - `NEGATIVE`: 부정
+    - `NEUTRAL`: 중립
+
+    ### ContentStatus
+    - `ACTIVE`: 정상
+    - `DELETED`: 삭제됨
+    - `HIDDEN`: 숨김
+
+    ### PostCategory
+    - `TOPIC`: 논제
+    - `NOTICE`: 공지
+    - `SUGGESTION`: 건의
+
+    ### TermsType
+    - `SERVICE`: 서비스 이용약관
+    - `PRIVACY`: 개인정보 처리방침
+    - `MARKETING`: 마케팅 수신 동의
+
+    ### FileType
+    - `IMAGE`: 이미지
+    - `VIDEO`: 동영상
+
+    ### ReasonCode
+    - `PROFANITY`: 욕설/비방
+    - `SPAM`: 도배/스팸
+    - `ADULT_CONTENT`: 음란물
+    - `FALSE_INFO`: 허위사실
+    - `VIOLATION`: 규정위반
+    - `ETC`: 기타
+
+    ### ActionType
+    - `DELETE`: 삭제
+    - `ACTIVATE`: 활성화
+    - `HIDE`: 숨김
+    - `SUSPEND`: 정지
+    - `WARN`: 경고
+
+    ### TopicCategory
+    - `MILITARY`: 국방/병역
+    - `MARRIAGE_FAMILY`: 결혼/가족
+    - `LAW_SYSTEM`: 법/제도
+    - `POLITICS_ADMINISTRATION`: 정치/행정
+    - `EMPLOYMENT_LABOR`: 고용/노동
+    - `EDUCATION_BIRTH`: 교육/출산
+    - `MEDIA_CULTURE`: 미디어/문화
+    - `ETC`: 기타

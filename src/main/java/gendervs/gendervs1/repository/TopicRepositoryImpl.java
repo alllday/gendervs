@@ -26,16 +26,20 @@ public class TopicRepositoryImpl implements TopicRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     
     @Override
-    public Page<Topic> searchTopics(String keyword, String category, String sortBy, Pageable pageable) {
+    public Page<Topic> searchTopics(String keyword, String category, String searchField, String sortBy, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
         
         // 활성화된 논제만
         builder.and(topic.status.isTrue());
         
-        // 키워드 검색 (제목 또는 설명)
+        // 키워드 검색 (검색 필드에 따라 분기)
         if (StringUtils.hasText(keyword)) {
-            builder.and(topic.title.containsIgnoreCase(keyword)
-                    .or(topic.description.containsIgnoreCase(keyword)));
+            switch (searchField) {
+                case "title" -> builder.and(topic.title.containsIgnoreCase(keyword));
+                case "content" -> builder.and(topic.description.containsIgnoreCase(keyword));
+                case "author" -> builder.and(topic.user.loginId.containsIgnoreCase(keyword));
+                default -> builder.and(topic.title.containsIgnoreCase(keyword)); // 기본값: 제목 검색
+            }
         }
         
         // 카테고리 필터
@@ -68,55 +72,6 @@ public class TopicRepositoryImpl implements TopicRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
     
-    @Override
-    public List<Topic> findPopularTopics(int limit) {
-        return queryFactory
-                .selectFrom(topic)
-                .leftJoin(topic.user, user).fetchJoin()
-                .where(topic.status.isTrue())
-                .orderBy(topic.participateCount.desc(), topic.createdAt.desc())
-                .limit(limit)
-                .fetch();
-    }
-    
-    @Override
-    public List<Topic> findTopicsByUserId(Long userId) {
-        return queryFactory
-                .selectFrom(topic)
-                .leftJoin(topic.user, user).fetchJoin()
-                .where(topic.user.userId.eq(userId)
-                        .and(topic.status.isTrue()))
-                .orderBy(topic.createdAt.desc())
-                .fetch();
-    }
-    
-    @Override
-    public List<Object[]> countTopicsByCategory() {
-        return queryFactory
-                .select(topic.category, topic.count())
-                .from(topic)
-                .where(topic.status.isTrue())
-                .groupBy(topic.category)
-                .orderBy(topic.count().desc())
-                .fetch()
-                .stream()
-                .map(tuple -> new Object[]{tuple.get(topic.category), tuple.get(topic.count())})
-                .toList();
-    }
-    
-    @Override
-    public List<Topic> findActiveTopics(int limit) {
-        return queryFactory
-                .selectFrom(topic)
-                .leftJoin(topic.user, user).fetchJoin()
-                .where(topic.status.isTrue())
-                .orderBy(
-                    topic.postCount.add(topic.participateCount.multiply(2)).desc(),
-                    topic.updatedAt.desc()
-                )
-                .limit(limit)
-                .fetch();
-    }
     
     private OrderSpecifier<?> getOrderSpecifier(String sortBy) {
         if ("popular".equals(sortBy)) {

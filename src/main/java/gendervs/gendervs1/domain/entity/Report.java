@@ -1,11 +1,13 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.ReasonCode;
+import gendervs.gendervs1.domain.enums.TargetType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reports", uniqueConstraints = @UniqueConstraint(columnNames = {"reporter_id", "target_type", "target_id"}))
+@Table(name = "reports", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "target_type", "target_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,25 +22,19 @@ public class Report {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String targetType;
+    private TargetType targetType;
 
     @Column(nullable = false)
     private Long targetId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String reasonCode;
+    private ReasonCode reasonCode;
 
     @Column(length = 100)
     private String reasonText;
 
     private LocalDateTime reportedAt;
-
-    private Boolean processed = false;
-
-    private LocalDateTime processedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "processor_id")
-    private User processor;
 }

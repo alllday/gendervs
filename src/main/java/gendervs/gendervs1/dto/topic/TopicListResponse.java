@@ -8,12 +8,13 @@ public class TopicListResponse {
     
     private Long topicId;
     private String title;
-    private String description;
     private String category;
-    private String authorName;
     private LocalDateTime createdAt;
     private Integer topicView;
-    private Integer likeCount;
-    private Integer participateCount;
     private Integer postCount;
+    private Integer participateCount;
+    private Integer likeCount;
+    private Integer dislikeCount;
+    private String authorUserId;
+    private String authorNickname;
 }

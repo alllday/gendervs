@@ -72,7 +72,7 @@ public class OperationResponse {
     
     // 관리자 기능 - 상태 변경 (operation에 상태값 저장)
     public static OperationResponse statusChanged(String resourceType, Long resourceId, String statusName) {
-        String message = String.format("%s 상태가 %s로 변경되었습니다", 
+        String message = String.format("%s 상태가 \"%s\"(으)로 변경되었습니다",
                                       getResourceDisplayName(resourceType), statusName);
         return new OperationResponse(true, message, resourceType, resourceId, statusName);
     }
@@ -80,10 +80,6 @@ public class OperationResponse {
     // 에러 응답 (operation에 HTTP 상태코드 저장)
     public static OperationResponse error(String httpCode, String message) {
         return new OperationResponse(false, message, "error", null, httpCode);
-    }
-    
-    public static OperationResponse error(String message) {
-        return new OperationResponse(false, message, "error", null, "500");
     }
     
     // Helper 메서드

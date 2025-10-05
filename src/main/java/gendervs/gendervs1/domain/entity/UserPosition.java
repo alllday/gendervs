@@ -1,7 +1,10 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.PositionCode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,19 +27,20 @@ public class UserPosition {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @ManyToOne
-    @JoinColumn(name = "position_id")
-    private TopicPosition position;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private PositionCode positionCode;
 
+    @CreationTimestamp
     private LocalDateTime selectedAt;
 
     private Boolean isCurrent = true;
 
     @Column(columnDefinition = "TEXT")
-    private String reason;
+    private String reason = null;
 
     @ManyToOne
     @JoinColumn(name = "reason_post_id")
-    private Post post;
+    private Post reasonPost;
 }
 

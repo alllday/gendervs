@@ -1,7 +1,12 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.ContentStatus;
+import gendervs.gendervs1.domain.enums.TopicCategory;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,15 +27,18 @@ public class Topic {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String category;
+    private TopicCategory topicCategory;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     private Integer topicView = 0;
@@ -43,7 +51,9 @@ public class Topic {
 
     private Integer postCount = 0;
 
-    private Boolean status = true;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private ContentStatus contentStatus = ContentStatus.ACTIVE;
 
     private Boolean isEditable = true;
 }

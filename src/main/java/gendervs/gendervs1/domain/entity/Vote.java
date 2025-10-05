@@ -1,7 +1,11 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.TargetType;
+import gendervs.gendervs1.domain.enums.VoteType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,15 +24,18 @@ public class Vote {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String targetType;
+    private TargetType targetType;
 
     @Column(nullable = false)
     private Long targetId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String voteType;
+    private VoteType voteType;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 }
 
