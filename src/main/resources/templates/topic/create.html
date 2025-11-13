@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>논제 등록</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { padding: 10px; font-family: sans-serif; }
+        a { display: block; margin-bottom: 10px; }
+        h2 { margin-bottom: 15px; }
+        label { display: block; margin: 10px 0 5px; }
+        input, textarea, select { width: 100%; padding: 8px; font-size: 16px; }
+        textarea { min-height: 100px; }
+        button { width: 100%; padding: 12px; margin-top: 15px; font-size: 16px; }
+        .message { margin-top: 10px; padding: 10px; }
+        .success { background: lightgreen; }
+        .error { background: lightcoral; }
+    </style>
+</head>
+<body>
+    <a href="/">← 메인</a>
+    <h2>논제 등록</h2>
+
+    <!-- 성공/실패 메시지 -->
+    <div th:if="${message}" th:class="${success} ? 'message success' : 'message error'" th:text="${message}"></div>
+
+    <form action="/topics/create" method="post">
+        <label>제목 *</label>
+        <input type="text" name="title" maxlength="100" required>
+
+        <label>설명 *</label>
+        <textarea name="description" required></textarea>
+
+        <label>카테고리 *</label>
+        <select name="topicCategory" required>
+            <option value="">선택</option>
+            <option value="MILITARY">국방/병역</option>
+            <option value="MARRIAGE_FAMILY">결혼/가족</option>
+            <option value="LAW_SYSTEM">법/제도</option>
+            <option value="POLITICS_ADMINISTRATION">정치/행정</option>
+            <option value="EMPLOYMENT_LABOR">고용/노동</option>
+            <option value="EDUCATION_BIRTH">교육/출산</option>
+            <option value="MEDIA_CULTURE">미디어/문화</option>
+            <option value="ETC">기타</option>
+        </select>
+
+        <label>사용자 ID (테스트용) *</label>
+        <input type="number" name="userId" value="1" required>
+
+        <button type="submit">등록</button>
+    </form>
+</body>
+</html>
