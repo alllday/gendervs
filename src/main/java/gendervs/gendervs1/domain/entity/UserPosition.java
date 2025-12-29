@@ -19,11 +19,11 @@ public class UserPosition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userPositionId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
@@ -39,7 +39,7 @@ public class UserPosition {
     @Column(columnDefinition = "TEXT")
     private String reason = null;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reason_post_id")
     private Post reasonPost;
 }

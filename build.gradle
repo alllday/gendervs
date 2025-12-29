@@ -47,6 +47,9 @@ dependencies {
     //테스트에서 lombok 사용
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Spring Boot DevTools : HTML / CSS / JS 수정 → 새로고침만 하면 바로 반영
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
 // QueryDSL Q-class 생성 설정 (modern Gradle way)

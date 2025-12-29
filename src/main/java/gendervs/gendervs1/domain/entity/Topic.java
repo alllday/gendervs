@@ -31,9 +31,9 @@ public class Topic {
     @Column(nullable = false, length = 20)
     private TopicCategory topicCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserProfile userProfile;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

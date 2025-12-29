@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${topic?.title}">논제 상세</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .header {
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+        .meta-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .description {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            line-height: 1.6;
+            font-size: 15px;
+            color: #444;
+            white-space: pre-wrap;
+        }
+        .stats {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 4px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+        .btn-outline {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        .btn-outline:hover {
+            background: #f5f5f5;
+        }
+        .posts-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            text-align: center;
+            color: #999;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/topics" class="back-link">← 목록으로</a>
+
+        <div class="header">
+            <div class="category-badge" th:text="${topic.topicCategory.displayName}">카테고리</div>
+            <h1 class="title" th:text="${topic.title}">논제 제목</h1>
+
+            <div class="meta-info">
+                <div class="meta-item">
+                    <span>작성자:</span>
+                    <strong th:text="${topic.userNickname}">닉네임</strong>
+                </div>
+                <div class="meta-item">
+                    <span>작성일:</span>
+                    <span th:text="${#temporals.format(topic.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+                </div>
+                <div class="meta-item" th:if="${topic.updatedAt != null && !topic.updatedAt.equals(topic.createdAt)}">
+                    <span>수정일:</span>
+                    <span th:text="${#temporals.format(topic.updatedAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 논제 설명 -->
+        <div class="description" th:text="${topic.description}">
+            논제에 대한 상세 설명이 여기에 표시됩니다.
+        </div>
+
+        <!-- 통계 정보 -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">조회수</div>
+                <div class="stat-value" th:text="${topic.topicView}">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">추천</div>
+                <div class="stat-value" th:text="${topic.likeCount}">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">비추천</div>
+                <div class="stat-value" th:text="${topic.dislikeCount}">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">참여자</div>
+                <div class="stat-value" th:text="${topic.participateCount}">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">게시글</div>
+                <div class="stat-value" th:text="${topic.postCount}">0</div>
+            </div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="actions">
+            <a href="/topics" class="btn btn-outline">목록</a>
+            <a th:if="${topic.isEditable}"
+               th:href="@{/topics/{id}/edit(id=${topic.topicId})}"
+               class="btn btn-secondary">수정</a>
+            <!-- 포지션 선택 버튼은 로그인 기능과 함께 추후 추가 -->
+        </div>
+
+        <!-- 게시글 목록 섹션 (추후 구현) -->
+        <div class="posts-section">
+            <h2>게시글 목록</h2>
+            <p>게시글 기능은 추후 추가될 예정입니다.</p>
+        </div>
+    </div>
+</body>
+</html>

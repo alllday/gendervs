@@ -51,5 +51,8 @@ public class User { // 일단 현재 단방향
     private Boolean isAdmin = false;
 
     private LocalDateTime lastLogin;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private UserProfile userProfile;
 }
 

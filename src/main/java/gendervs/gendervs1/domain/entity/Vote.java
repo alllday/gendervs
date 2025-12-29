@@ -20,9 +20,9 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long voteId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserProfile userProfile;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)

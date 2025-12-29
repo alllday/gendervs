@@ -3,54 +3,33 @@ package gendervs.gendervs1.dto.topic;
 import gendervs.gendervs1.domain.entity.Topic;
 import gendervs.gendervs1.domain.enums.ContentStatus;
 import gendervs.gendervs1.domain.enums.TopicCategory;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
+/**
+ * 논제 응답 DTO (순수 POJO - QueryDSL 의존성 없음)
+ * - 목록조회: Projections.constructor 사용
+ * - 등록응답: from() 정적 팩토리 메서드 사용
+ */
+@Getter
+@AllArgsConstructor
 public class TopicResponse {
 
-    private Long topicId;
-    private String title;
-    private String description;
-    private TopicCategory topicCategory;
-    private String topicCategoryDisplayName;
-    private Long userId;
-    private String userNickname;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Integer topicView;
-    private Integer likeCount;
-    private Integer dislikeCount;
-    private Integer participateCount;
-    private Integer postCount;
-    private ContentStatus contentStatus;
-    private Boolean isEditable;
-
-    // Entity -> DTO 변환 정적 팩토리 메서드
-    public static TopicResponse from(Topic topic) {
-        TopicResponse response = new TopicResponse();
-        response.setTopicId(topic.getTopicId());
-        response.setTitle(topic.getTitle());
-        response.setDescription(topic.getDescription());
-        response.setTopicCategory(topic.getTopicCategory());
-        response.setTopicCategoryDisplayName(topic.getTopicCategory().getDisplayName());
-
-        if (topic.getUser() != null) {
-            response.setUserId(topic.getUser().getUserId());
-            // UserProfile이 있다면 nickname도 설정 (나중에 추가 가능)
-        }
-
-        response.setCreatedAt(topic.getCreatedAt());
-        response.setUpdatedAt(topic.getUpdatedAt());
-        response.setTopicView(topic.getTopicView());
-        response.setLikeCount(topic.getLikeCount());
-        response.setDislikeCount(topic.getDislikeCount());
-        response.setParticipateCount(topic.getParticipateCount());
-        response.setPostCount(topic.getPostCount());
-        response.setContentStatus(topic.getContentStatus());
-        response.setIsEditable(topic.getIsEditable());
-
-        return response;
-    }
+    private final Long topicId;
+    private final String title;
+    private final String description;
+    private final TopicCategory topicCategory;
+    private final Long userId;              // 작성자 ID (유저 페이지 링크용)
+    private final String userNickname;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final Integer topicView;
+    private final Integer likeCount;
+    private final Integer dislikeCount;
+    private final Integer participateCount;
+    private final Integer postCount;
+    private final ContentStatus contentStatus;
+    private final Boolean isEditable;
 }

@@ -7,9 +7,9 @@ public enum VoteType {
     LIKE("좋아요"),
     DISLIKE("싫어요");
 
-    private final String value;
+    private final String displayName;
 
-    VoteType(String value) {
-        this.value = value;
+    VoteType(String displayName) {
+        this.displayName = displayName;
     }
 }

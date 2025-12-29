@@ -2,6 +2,7 @@ package gendervs.gendervs1.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public class UserProfile {
     @Column(name = "user_id")
     private Long userId; // real PK
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId // PK와 FK를 같은 컬럼으로 매핑
     @JoinColumn(name = "user_id")
     private User user; // 연관관계
@@ -33,9 +34,30 @@ public class UserProfile {
     private String gender;
 
     @Column(nullable = false)
-    private LocalDate birth;
+    private Integer birthYear;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    /**
+     * 현재 나이 계산 (만 나이)
+     */
+    public int getAge() {
+        if (birthYear == null) {
+            return 0;
+        }
+        return LocalDate.now().getYear() - birthYear;
+    }
+
+    /**
+     * 연령대 계산 ("20대", "30대", ...)
+     */
+    public String getAgeRange() {
+        int age = getAge();
+        return (age / 10) * 10 + "대";
+    }
 }
 

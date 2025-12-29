@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Input Type Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .input-group label { width: 150px; font-weight: bold; color: #333; }
+        .input-group input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .input-group input[type="checkbox"], .input-group input[type="radio"] { flex: none; margin-right: 10px; }
+        h2 { border-left: 5px solid #007bff; padding-left: 10px; color: #007bff; }
+        .submit-area { margin-top: 20px; text-align: center; }
+        input[type="submit"] { background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }
+        input[type="submit"]:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>HTML Input Type 전체 테스트</h1>
+    <form action="#">
+
+        <h2>1. 텍스트 입력 계열</h2>
+        <div class="input-group">
+            <label>text</label>
+            <input type="text" placeholder="일반 텍스트 입력">
+        </div>
+        <div class="input-group">
+            <label>password</label>
+            <input type="password" placeholder="비밀번호 입력">
+        </div>
+        <div class="input-group">
+            <label>email</label>
+            <input type="email" placeholder="test@example.com">
+        </div>
+        <div class="input-group">
+            <label>search</label>
+            <input type="search" placeholder="검색어 입력 (X버튼 생김)">
+        </div>
+        <div class="input-group">
+            <label>tel</label>
+            <input type="tel" placeholder="010-1234-5678">
+        </div>
+
+        <h2>2. 숫자 및 범위</h2>
+        <div class="input-group">
+            <label>number</label>
+            <input type="number" min="1" max="100" value="10">
+        </div>
+        <div class="input-group">
+            <label>range</label>
+            <input type="range" min="0" max="100">
+        </div>
+
+        <h2>3. 날짜 및 시간</h2>
+        <div class="input-group">
+            <label>date</label>
+            <input type="date">
+        </div>
+        <div class="input-group">
+            <label>month</label>
+            <input type="month">
+        </div>
+        <div class="input-group">
+            <label>week</label>
+            <input type="week">
+        </div>
+        <div class="input-group">
+            <label>time</label>
+            <input type="time">
+        </div>
+        <div class="input-group">
+            <label>datetime-local</label>
+            <input type="datetime-local">
+        </div>
+
+        <h2>4. 선택 및 기타</h2>
+        <div class="input-group">
+            <label>checkbox</label>
+            <input type="checkbox" id="chk1"><label for="chk1" style="font-weight: normal;">동의함</label>
+        </div>
+        <div class="input-group">
+            <label>radio</label>
+            <input type="radio" name="gender" id="r1"><label for="r1" style="font-weight: normal;">남</label>
+            <input type="radio" name="gender" id="r2"><label for="r2" style="font-weight: normal;">여</label>
+        </div>
+        <div class="input-group">
+            <label>color</label>
+            <input type="color" value="#007bff">
+        </div>
+        <div class="input-group">
+            <label>file</label>
+            <input type="file">
+        </div>
+
+        <h2>5. 실행 버튼</h2>
+        <div class="submit-area">
+            <input type="button" value="일반 버튼(button)" onclick="alert('클릭되었습니다!')">
+            <input type="reset" value="초기화(reset)">
+            <input type="submit" value="전송(submit)">
+        </div>
+
+        <input type="hidden" name="userId" value="12345">
+
+    </form>
+</div>
+
+</body>
+</html>

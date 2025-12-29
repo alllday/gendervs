@@ -6,5 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update  # 개발 중이면 update, 운영에선 validate 추천
+      ddl-auto: validate  # 개발 중이면 update, 운영에선 validate 추천
     show-sql: true
+  thymeleaf:
+    cache: false
