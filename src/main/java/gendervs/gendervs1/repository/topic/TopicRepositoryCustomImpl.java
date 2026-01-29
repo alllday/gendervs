@@ -26,11 +26,11 @@ import static gendervs.gendervs1.domain.entity.QUserProfile.userProfile;
  * TopicRepositoryCustom의 QueryDSL 구현체
  * Spring Data JPA가 자동으로 인식 (naming convention: {RepositoryName}Impl)
  */
-public class TopicRepositoryImpl implements TopicRepositoryCustom {
+public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public TopicRepositoryImpl(EntityManager em) {
+    public TopicRepositoryCustomImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
 

@@ -1,29 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GenderVS</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { padding: 10px; font-family: sans-serif; }
-        header { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
-        h1 { margin: 15px 0; }
-        a { display: inline-block; margin-right: 10px; }
-        button { padding: 10px 20px; margin-top: 15px; width: 100%; font-size: 16px; }
+        .main-content { padding: 20px; }
+        .main-content h1 { margin: 15px 0; }
+        .main-content button { padding: 10px 20px; margin-top: 15px; width: 100%; font-size: 16px; }
     </style>
 </head>
 <body>
-    <header>
-        <div>GenderVS</div>
-        <a href="/login">로그인</a>
-        <a href="/signup">회원가입</a>
-    </header>
+    <main layout:fragment="content">
+        <div class="main-content">
+            <h1>메인</h1>
+            <p>논제 목록 (준비중)</p>
 
-    <h1>메인</h1>
-    <p>논제 목록 (준비중)</p>
-
-    <button onclick="location.href='/topics/create'">논제 등록하기</button>
-    <button onclick="location.href='/topics'">논제 목록</button>
+            <button onclick="location.href='/topics/create'">논제 등록하기</button>
+            <button onclick="location.href='/topics'">논제 목록</button>
+        </div>
+    </main>
 </body>
 </html>

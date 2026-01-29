@@ -29,7 +29,7 @@ public class QUserProfile extends EntityPathBase<UserProfile> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
-    public final StringPath gender = createString("gender");
+    public final EnumPath<gendervs.gendervs1.domain.enums.Gender> gender = createEnum("gender", gendervs.gendervs1.domain.enums.Gender.class);
 
     public final StringPath nickname = createString("nickname");
 
@@ -59,7 +59,7 @@ public class QUserProfile extends EntityPathBase<UserProfile> {
 
     public QUserProfile(Class<? extends UserProfile> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
     }
 
 }

@@ -1,5 +1,6 @@
 package gendervs.gendervs1.domain.entity;
 
+import gendervs.gendervs1.domain.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,8 +31,9 @@ public class UserProfile {
 
     private int score = 0;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 1)
-    private String gender;
+    private Gender gender;
 
     @Column(nullable = false)
     private Integer birthYear;

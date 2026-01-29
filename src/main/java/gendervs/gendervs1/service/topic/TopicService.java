@@ -119,24 +119,8 @@ public class TopicService {
             throw new IllegalStateException("삭제되었거나 정지된 논제입니다.");
         }
 
-        // 3. DTO 변환 및 반환 (이미 Fetch Join으로 로딩되어 추가 쿼리 없음)
-        return new TopicResponse(
-                topic.getTopicId(),
-                topic.getTitle(),
-                topic.getDescription(),
-                topic.getTopicCategory(),
-                topic.getUserProfile().getUserId(),
-                topic.getUserProfile().getNickname(),
-                topic.getCreatedAt(),
-                topic.getUpdatedAt(),
-                topic.getTopicView(),
-                topic.getLikeCount(),
-                topic.getDislikeCount(),
-                topic.getParticipateCount(),
-                topic.getPostCount(),
-                topic.getContentStatus(),
-                topic.getIsEditable()
-        );
+        // 3. DTO 변환 및 반환 (정적 팩토리 메서드 사용)
+        return TopicResponse.from(topic);
     }
 
     /**

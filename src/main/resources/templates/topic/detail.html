@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
 <head>
-    <meta charset="UTF-8">
     <title th:text="${topic?.title}">논제 상세</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        .detail-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
         }
-        .container {
+        .detail-container .inner {
             background: white;
             padding: 30px;
             border-radius: 8px;
         }
-        .header {
+        .detail-header {
             border-bottom: 2px solid #4CAF50;
             padding-bottom: 20px;
             margin-bottom: 20px;
@@ -58,29 +58,88 @@
             font-size: 15px;
             color: #444;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-        .stats {
+        .vote-section {
             display: flex;
-            gap: 30px;
-            padding: 20px;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
             background: #fafafa;
             border-radius: 4px;
-            margin: 20px 0;
-            flex-wrap: wrap;
         }
-        .stat-item {
-            text-align: center;
+        .vote-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
         }
-        .stat-label {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 5px;
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .stat-value {
-            font-size: 20px;
+        .like-btn:hover {
+            border-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        .dislike-btn:hover {
+            border-color: #f44336;
+            background: #fef1f0;
+        }
+        .vote-icon { font-size: 20px; }
+        .vote-text { font-weight: 500; color: #666; }
+        .vote-count { font-weight: bold; color: #333; min-width: 30px; text-align: center; }
+        .position-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .position-label {
+            font-size: 16px;
             font-weight: bold;
             color: #333;
+            margin-bottom: 15px;
         }
+        .position-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .position-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 30px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+        .position-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .position-btn.selected { border-width: 4px; font-weight: bold; }
+        .positive-btn { border-color: #4CAF50; }
+        .positive-btn:hover, .positive-btn.selected { background: #e8f5e9; border-color: #2e7d32; }
+        .negative-btn { border-color: #f44336; }
+        .negative-btn:hover, .negative-btn.selected { background: #ffebee; border-color: #c62828; }
+        .neutral-btn { border-color: #FF9800; }
+        .neutral-btn:hover, .neutral-btn.selected { background: #fff3e0; border-color: #e65100; }
+        .position-icon { font-size: 32px; }
+        .position-text { font-size: 18px; font-weight: 600; color: #333; }
         .actions {
             display: flex;
             gap: 10px;
@@ -97,28 +156,12 @@
             display: inline-block;
             font-size: 14px;
         }
-        .btn-primary {
-            background: #4CAF50;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #45a049;
-        }
-        .btn-secondary {
-            background: #2196F3;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: #0b7dda;
-        }
-        .btn-outline {
-            background: white;
-            color: #666;
-            border: 1px solid #ddd;
-        }
-        .btn-outline:hover {
-            background: #f5f5f5;
-        }
+        .btn-primary { background: #4CAF50; color: white; }
+        .btn-primary:hover { background: #45a049; }
+        .btn-secondary { background: #2196F3; color: white; }
+        .btn-secondary:hover { background: #0b7dda; }
+        .btn-outline { background: white; color: #666; border: 1px solid #ddd; }
+        .btn-outline:hover { background: #f5f5f5; }
         .posts-section {
             margin-top: 40px;
             padding: 20px;
@@ -133,78 +176,138 @@
             color: #2196F3;
             text-decoration: none;
         }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        .back-link:hover { text-decoration: underline; }
     </style>
+    <script>
+        let selectedPosition = null;
+
+        function selectPosition(position) {
+            selectedPosition = position;
+            document.querySelectorAll('.position-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.closest('.position-btn').classList.add('selected');
+        }
+
+        function confirmPosition() {
+            if (!selectedPosition) {
+                alert('입장을 먼저 선택해주세요.');
+                return;
+            }
+            alert(`입장 "${selectedPosition}"이(가) 선택되었습니다.\n(백엔드 API 연동 예정)`);
+        }
+
+        function changePosition() {
+            if (!selectedPosition) {
+                alert('변경할 입장을 먼저 선택해주세요.');
+                return;
+            }
+            const reason = prompt('입장 변경 사유를 입력해주세요 (선택사항):');
+            alert(`입장이 "${selectedPosition}"(으)로 변경되었습니다.\n(백엔드 API 연동 예정)`);
+        }
+
+        function likeTopic() {
+            alert('추천 기능 (백엔드 API 연동 예정)');
+        }
+
+        function dislikeTopic() {
+            alert('비추천 기능 (백엔드 API 연동 예정)');
+        }
+
+        function showStatistics() {
+            alert('통계 보기 기능 (추후 구현 예정)');
+        }
+    </script>
 </head>
 <body>
-    <div class="container">
-        <a href="/topics" class="back-link">← 목록으로</a>
+    <main layout:fragment="content">
+        <div class="detail-container">
+            <div class="inner">
+                <a href="/topics" class="back-link">← 목록으로</a>
 
-        <div class="header">
-            <div class="category-badge" th:text="${topic.topicCategory.displayName}">카테고리</div>
-            <h1 class="title" th:text="${topic.title}">논제 제목</h1>
+                <div class="detail-header">
+                    <div class="category-badge" th:text="${topic.topicCategory.displayName}">카테고리</div>
+                    <h1 class="title" th:text="${topic.title}">논제 제목</h1>
 
-            <div class="meta-info">
-                <div class="meta-item">
-                    <span>작성자:</span>
-                    <strong th:text="${topic.userNickname}">닉네임</strong>
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <span>작성자:</span>
+                            <strong th:text="${topic.userNickname}">닉네임</strong>
+                        </div>
+                        <div class="meta-item">
+                            <span>작성일:</span>
+                            <span th:text="${#temporals.format(topic.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>조회수:</span>
+                            <strong th:text="${topic.topicView}">0</strong>
+                        </div>
+                        <div class="meta-item">
+                            <span>참여자:</span>
+                            <strong th:text="${topic.participateCount}">0</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="meta-item">
-                    <span>작성일:</span>
-                    <span th:text="${#temporals.format(topic.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+
+                <!-- 논제 설명 -->
+                <div class="description" th:text="${topic.description}">
+                    논제에 대한 상세 설명이 여기에 표시됩니다.
                 </div>
-                <div class="meta-item" th:if="${topic.updatedAt != null && !topic.updatedAt.equals(topic.createdAt)}">
-                    <span>수정일:</span>
-                    <span th:text="${#temporals.format(topic.updatedAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+
+                <!-- 추천/비추천 버튼 -->
+                <div class="vote-section">
+                    <button class="vote-btn like-btn" onclick="likeTopic()">
+                        <span class="vote-icon">&#128077;</span>
+                        <span class="vote-text">추천</span>
+                        <span class="vote-count" th:text="${topic.likeCount}">0</span>
+                    </button>
+                    <button class="vote-btn dislike-btn" onclick="dislikeTopic()">
+                        <span class="vote-icon">&#128078;</span>
+                        <span class="vote-text">비추천</span>
+                        <span class="vote-count" th:text="${topic.dislikeCount}">0</span>
+                    </button>
+                </div>
+
+                <!-- 포지션 선택 영역 -->
+                <div class="position-section">
+                    <div class="position-label">입장을 선택하세요:</div>
+                    <div class="position-buttons">
+                        <button class="position-btn positive-btn" onclick="selectPosition('POSITIVE')">
+                            <span class="position-icon">&#10004;</span>
+                            <span class="position-text">긍정</span>
+                        </button>
+                        <button class="position-btn negative-btn" onclick="selectPosition('NEGATIVE')">
+                            <span class="position-icon">&#10060;</span>
+                            <span class="position-text">부정</span>
+                        </button>
+                        <button class="position-btn neutral-btn" onclick="selectPosition('NEUTRAL')">
+                            <span class="position-icon">&#9878;</span>
+                            <span class="position-text">중립</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 액션 버튼 -->
+                <div class="actions">
+                    <button class="btn btn-primary position-action-btn" onclick="confirmPosition()">
+                        입장 선택
+                    </button>
+
+                    <button class="btn btn-outline" onclick="showStatistics()">통계 보기</button>
+
+                    <a href="/topics" class="btn btn-outline">목록</a>
+                    <a th:if="${topic.isEditable}"
+                       th:href="@{/topics/{id}/edit(id=${topic.topicId})}"
+                       class="btn btn-secondary">수정</a>
+                </div>
+
+                <!-- 게시글 목록 섹션 (추후 구현) -->
+                <div class="posts-section">
+                    <h2>게시글 목록</h2>
+                    <p>게시글 기능은 추후 추가될 예정입니다.</p>
                 </div>
             </div>
         </div>
-
-        <!-- 논제 설명 -->
-        <div class="description" th:text="${topic.description}">
-            논제에 대한 상세 설명이 여기에 표시됩니다.
-        </div>
-
-        <!-- 통계 정보 -->
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-label">조회수</div>
-                <div class="stat-value" th:text="${topic.topicView}">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">추천</div>
-                <div class="stat-value" th:text="${topic.likeCount}">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">비추천</div>
-                <div class="stat-value" th:text="${topic.dislikeCount}">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">참여자</div>
-                <div class="stat-value" th:text="${topic.participateCount}">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">게시글</div>
-                <div class="stat-value" th:text="${topic.postCount}">0</div>
-            </div>
-        </div>
-
-        <!-- 액션 버튼 -->
-        <div class="actions">
-            <a href="/topics" class="btn btn-outline">목록</a>
-            <a th:if="${topic.isEditable}"
-               th:href="@{/topics/{id}/edit(id=${topic.topicId})}"
-               class="btn btn-secondary">수정</a>
-            <!-- 포지션 선택 버튼은 로그인 기능과 함께 추후 추가 -->
-        </div>
-
-        <!-- 게시글 목록 섹션 (추후 구현) -->
-        <div class="posts-section">
-            <h2>게시글 목록</h2>
-            <p>게시글 기능은 추후 추가될 예정입니다.</p>
-        </div>
-    </div>
+    </main>
 </body>
 </html>

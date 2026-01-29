@@ -28,7 +28,7 @@ public class Topic {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 30)
     private TopicCategory topicCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)

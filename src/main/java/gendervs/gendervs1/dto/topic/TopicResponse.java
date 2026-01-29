@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 /**
  * 논제 응답 DTO (순수 POJO - QueryDSL 의존성 없음)
- * - 목록조회: Projections.constructor 사용
- * - 등록응답: from() 정적 팩토리 메서드 사용
+ * - 목록조회: Projections.constructor 사용 - only 조회, 성능 중시
+ * - 상세조회: from() 정적 팩토리 메서드 사용 - 확장 가능성(entity 사용, 게시글 목록 ... 등)
  */
 @Getter
 @AllArgsConstructor
@@ -32,4 +32,29 @@ public class TopicResponse {
     private final Integer postCount;
     private final ContentStatus contentStatus;
     private final Boolean isEditable;
+
+    /**
+     * 정적 팩토리 메서드 - Topic Entity를 TopicResponse로 변환
+     * @param topic Topic 엔티티 (UserProfile Fetch Join 필수)
+     * @return TopicResponse DTO
+     */
+    public static TopicResponse from(Topic topic) {
+        return new TopicResponse(
+                topic.getTopicId(),
+                topic.getTitle(),
+                topic.getDescription(),
+                topic.getTopicCategory(),
+                topic.getUserProfile().getUserId(),
+                topic.getUserProfile().getNickname(),
+                topic.getCreatedAt(),
+                topic.getUpdatedAt(),
+                topic.getTopicView(),
+                topic.getLikeCount(),
+                topic.getDislikeCount(),
+                topic.getParticipateCount(),
+                topic.getPostCount(),
+                topic.getContentStatus(),
+                topic.getIsEditable()
+        );
+    }
 }
