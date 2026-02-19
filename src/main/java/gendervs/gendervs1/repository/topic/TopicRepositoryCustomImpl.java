@@ -4,6 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import gendervs.gendervs1.domain.enums.ContentStatus;
@@ -60,7 +61,8 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
                         topic.participateCount,     // Integer
                         topic.postCount,            // Integer
                         topic.contentStatus,        // ContentStatus
-                        topic.isEditable            // Boolean
+                        topic.isEditable,           // Boolean
+                        Expressions.constant(false)  // Boolean (canEdit) - 목록에서는 항상 false
                 ))
                 .from(topic)
                 .innerJoin(userProfile).on(userProfile.userId.eq(topic.userProfile.userId))

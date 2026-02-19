@@ -35,6 +35,8 @@
             font-weight: bold;
             margin: 10px 0;
             color: #333;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .meta-info {
             display: flex;
@@ -162,6 +164,8 @@
         .btn-secondary:hover { background: #0b7dda; }
         .btn-outline { background: white; color: #666; border: 1px solid #ddd; }
         .btn-outline:hover { background: #f5f5f5; }
+        .btn-danger { background: #f44336; color: white; }
+        .btn-danger:hover { background: #d32f2f; }
         .posts-section {
             margin-top: 40px;
             padding: 20px;
@@ -178,15 +182,15 @@
         }
         .back-link:hover { text-decoration: underline; }
     </style>
-    <script>
+    <script th:inline="javascript">
         let selectedPosition = null;
 
-        function selectPosition(position) {
+        function selectPosition(position, btn) {
             selectedPosition = position;
-            document.querySelectorAll('.position-btn').forEach(btn => {
-                btn.classList.remove('selected');
+            document.querySelectorAll('.position-btn').forEach(b => {
+                b.classList.remove('selected');
             });
-            event.target.closest('.position-btn').classList.add('selected');
+            btn.classList.add('selected');
         }
 
         function confirmPosition() {
@@ -195,15 +199,6 @@
                 return;
             }
             alert(`입장 "${selectedPosition}"이(가) 선택되었습니다.\n(백엔드 API 연동 예정)`);
-        }
-
-        function changePosition() {
-            if (!selectedPosition) {
-                alert('변경할 입장을 먼저 선택해주세요.');
-                return;
-            }
-            const reason = prompt('입장 변경 사유를 입력해주세요 (선택사항):');
-            alert(`입장이 "${selectedPosition}"(으)로 변경되었습니다.\n(백엔드 API 연동 예정)`);
         }
 
         function likeTopic() {
@@ -217,6 +212,20 @@
         function showStatistics() {
             alert('통계 보기 기능 (추후 구현 예정)');
         }
+
+        function deleteTopic() {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        // 페이지 로드 시 에러 메시지가 있으면 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorMessage = /*[[${errorMessage}]]*/ null;
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
     </script>
 </head>
 <body>
@@ -272,15 +281,15 @@
                 <div class="position-section">
                     <div class="position-label">입장을 선택하세요:</div>
                     <div class="position-buttons">
-                        <button class="position-btn positive-btn" onclick="selectPosition('POSITIVE')">
+                        <button class="position-btn positive-btn" onclick="selectPosition('POSITIVE', this)">
                             <span class="position-icon">&#10004;</span>
                             <span class="position-text">긍정</span>
                         </button>
-                        <button class="position-btn negative-btn" onclick="selectPosition('NEGATIVE')">
+                        <button class="position-btn negative-btn" onclick="selectPosition('NEGATIVE', this)">
                             <span class="position-icon">&#10060;</span>
                             <span class="position-text">부정</span>
                         </button>
-                        <button class="position-btn neutral-btn" onclick="selectPosition('NEUTRAL')">
+                        <button class="position-btn neutral-btn" onclick="selectPosition('NEUTRAL', this)">
                             <span class="position-icon">&#9878;</span>
                             <span class="position-text">중립</span>
                         </button>
@@ -296,9 +305,12 @@
                     <button class="btn btn-outline" onclick="showStatistics()">통계 보기</button>
 
                     <a href="/topics" class="btn btn-outline">목록</a>
-                    <a th:if="${topic.isEditable}"
-                       th:href="@{/topics/{id}/edit(id=${topic.topicId})}"
-                       class="btn btn-secondary">수정</a>
+                    <th:block th:if="${topic.canEdit}">
+                        <a th:href="@{/topics/{id}/edit(id=${topic.topicId})}"
+                           class="btn btn-secondary">수정</a>
+                        <button class="btn btn-danger" onclick="deleteTopic()">삭제</button>
+                        <form id="deleteForm" th:action="@{/topics/{id}/delete(id=${topic.topicId})}" method="post" style="display:none;"></form>
+                    </th:block>
                 </div>
 
                 <!-- 게시글 목록 섹션 (추후 구현) -->

@@ -32,13 +32,19 @@ public class TopicResponse {
     private final Integer postCount;
     private final ContentStatus contentStatus;
     private final Boolean isEditable;
+    private final Boolean canEdit;          // 수정/삭제 버튼 노출 여부 (본인 + isEditable)
 
     /**
-     * 정적 팩토리 메서드 - Topic Entity를 TopicResponse로 변환
-     * @param topic Topic 엔티티 (UserProfile Fetch Join 필수)
-     * @return TopicResponse DTO
+     * 목록 조회용
      */
     public static TopicResponse from(Topic topic) {
+        return from(topic, false);
+    }
+
+    /**
+     * 상세 조회용 (canEdit 계산 결과 전달)
+     */
+    public static TopicResponse from(Topic topic, boolean canEdit) {
         return new TopicResponse(
                 topic.getTopicId(),
                 topic.getTitle(),
@@ -54,7 +60,8 @@ public class TopicResponse {
                 topic.getParticipateCount(),
                 topic.getPostCount(),
                 topic.getContentStatus(),
-                topic.getIsEditable()
+                topic.getIsEditable(),
+                canEdit
         );
     }
 }

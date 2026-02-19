@@ -6,8 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * 논제 등록/수정 요청 DTO
+ */
 @Data
-public class TopicCreateRequest {
+public class TopicRequest {
 
     @NotBlank(message = "논제 제목은 필수입니다")
     @Size(max = 100, message = "논제 제목은 100자 이하여야 합니다")

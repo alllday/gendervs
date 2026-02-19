@@ -3,12 +3,16 @@ package gendervs.gendervs1.controller.topic;
 import gendervs.gendervs1.domain.enums.SearchField;
 import gendervs.gendervs1.domain.enums.SortBy;
 import gendervs.gendervs1.domain.enums.TopicCategory;
-import gendervs.gendervs1.dto.topic.TopicCreateRequest;
+import gendervs.gendervs1.dto.topic.TopicRequest;
 import gendervs.gendervs1.dto.topic.TopicResponse;
 import gendervs.gendervs1.service.topic.TopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,9 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 논제 관련 컨트롤러
@@ -31,6 +33,7 @@ import java.util.List;
 public class TopicController {
 
     private final TopicService topicService;
+    private final MessageSource messageSource;
 
     /**
      * 논제 목록 페이지
@@ -119,23 +122,24 @@ public class TopicController {
      * @param id 논제 ID
      */
     @GetMapping("/{id}")
-    public String detailTopic(@PathVariable Long id, Model model) {
+    public String detailTopic(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
-            TopicResponse topic = topicService.getTopicDetail(id);
+            // userDetails가 null일 수 있기 때문에
+            String loginId = userDetails != null ? userDetails.getUsername() : null;
+            TopicResponse topic = topicService.getTopicDetail(id, loginId);
             model.addAttribute("topic", topic);
             return "topic/detail";
-        } catch (IllegalArgumentException e) {
-            // 존재하지 않는 논제
-            model.addAttribute("error", e.getMessage());
-            return "error/404";
-        } catch (IllegalStateException e) {
-            // 삭제되었거나 정지된 논제
-            model.addAttribute("error", e.getMessage());
-            return "error/403";
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // 존재하지 않거나 접근 불가인 경우 목록으로 리다이렉트
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/topics";
         } catch (Exception e) {
-            // 기타 예외
-            model.addAttribute("error", "논제를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
-            return "error/500";
+            redirectAttributes.addFlashAttribute("errorMessage", "논제를 불러오는 중 오류가 발생했습니다.");
+            return "redirect:/topics";
         }
     }
 
@@ -145,7 +149,7 @@ public class TopicController {
      */
     @GetMapping("/create")
     public String createPage() {
-        return "topic/create";
+        return "topic/form";
     }
 
     /**
@@ -154,37 +158,112 @@ public class TopicController {
      */
     @PostMapping("/create")
     public String createTopic(
-            @Valid @ModelAttribute TopicCreateRequest request,
+            @Valid @ModelAttribute TopicRequest request,
             BindingResult bindingResult,
-            @RequestParam Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             Model model) {
 
-        // TopicCreateRequest에 대한 검증 에러가 있으면
         if (bindingResult.hasErrors()) {
             model.addAttribute("success", false);
-            model.addAttribute("message", bindingResult.getAllErrors().get(0).getDefaultMessage());
-            return "topic/create";
+            String errorMsg = messageSource.getMessage(
+                    bindingResult.getAllErrors().get(0), LocaleContextHolder.getLocale());
+            model.addAttribute("message", errorMsg);
+            return "topic/form";
         }
 
-        // TopicCreateRequest외 문제들 (ex : 사용자, DB 등...)
         try {
-            Long topicId = topicService.createTopic(request, userId);
-            model.addAttribute("success", true);
-            model.addAttribute("message", "논제가 성공적으로 등록되었습니다! (ID: " + topicId + ")");
-        } catch (IllegalArgumentException e) {
-            // 사용자 존재하지 않음
-            model.addAttribute("success", false);
-            model.addAttribute("message", e.getMessage());
-        } catch (IllegalStateException e) {
-            // 사용자 상태 문제
+            Long topicId = topicService.createTopic(request, userDetails.getUsername());
+            return "redirect:/topics/" + topicId;
+        } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("success", false);
             model.addAttribute("message", e.getMessage());
         } catch (Exception e) {
-            // 기타 예외
             model.addAttribute("success", false);
             model.addAttribute("message", "논제 등록 중 오류가 발생했습니다: " + e.getMessage());
         }
+        return "topic/form";
+    }
 
-        return "topic/create";
+    /**
+     * 논제 수정 페이지
+     * GET /topics/{id}/edit
+     */
+    @GetMapping("/{id}/edit")
+    public String editPage(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        try {
+            TopicResponse topic = topicService.getTopicForEdit(id, userDetails.getUsername());
+            model.addAttribute("topic", topic);
+            return "topic/form";
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // 존재하지 않거나, 수정 불가능한 경우 상세 페이지로 리다이렉트
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/topics/" + id;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "논제를 불러오는 중 오류가 발생했습니다.");
+            return "redirect:/topics/" + id;
+        }
+    }
+
+    /**
+     * 논제 수정 처리
+     * POST /topics/{id}/edit
+     */
+    @PostMapping("/{id}/edit")
+    public String updateTopic(
+            @PathVariable Long id,
+            @Valid @ModelAttribute TopicRequest request,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        // 검증 에러 시 사용자 입력 데이터 유지
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("success", false);
+            String errorMsg = messageSource.getMessage(
+                    bindingResult.getAllErrors().get(0), LocaleContextHolder.getLocale());
+            model.addAttribute("message", errorMsg);
+            model.addAttribute("topicId", id);
+            // request는 @ModelAttribute로 자동 바인딩되어 model에 "topicRequest"로 이미 존재
+            return "topic/form";
+        }
+
+        try {
+            topicService.updateTopic(id, request, userDetails.getUsername());
+            return "redirect:/topics/" + id;
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // 수정 불가능한 경우 상세 페이지로 리다이렉트
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/topics/" + id;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "논제 수정 중 오류가 발생했습니다.");
+            return "redirect:/topics/" + id;
+        }
+    }
+
+    /**
+     * 논제 삭제 처리
+     * POST /topics/{id}/delete
+     */
+    @PostMapping("/{id}/delete")
+    public String deleteTopic(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        try {
+            topicService.deleteTopic(id, userDetails.getUsername());
+            redirectAttributes.addFlashAttribute("errorMessage", "논제가 삭제되었습니다.");
+            return "redirect:/topics";
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/topics/" + id;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "논제 삭제 중 오류가 발생했습니다.");
+            return "redirect:/topics/" + id;
+        }
     }
 }

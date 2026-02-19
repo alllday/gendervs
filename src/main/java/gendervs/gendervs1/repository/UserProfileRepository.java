@@ -13,14 +13,13 @@ import java.util.Optional;
  */
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
-
     /**
-     * UserProfile 조회 (User Fetch Join)
-     * - User 상태 확인을 위해 User도 함께 조회
+     * loginId로 UserProfile 조회
+     * - Security에서 이미 사용자 상태 검증하므로 User fetch 불필요
+     * - Optional<UserProfile> findByUser_LoginId(@Param("loginId") String loginId); 와 동일 (언더바(_)는 내부 객체 필드 즉, 여기서는 User의 필드를 말함)
      */
     @Query("SELECT up FROM UserProfile up " +
-           "JOIN FETCH up.user " +
-           "WHERE up.userId = :userId")
-    Optional<UserProfile> findByIdWithUser(@Param("userId") Long userId);
-
+           "JOIN up.user u " +
+           "WHERE u.loginId = :loginId")
+    Optional<UserProfile> findByLoginId(@Param("loginId") String loginId);
 }

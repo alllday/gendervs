@@ -35,10 +35,11 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            // URL별 접근 권한 설정
+        http.csrf(csrf -> csrf.disable())
+                // URL별 접근 권한 설정
             .authorizeHttpRequests(auth -> auth
                 // 누구나 접근 가능한 페이지
+                .requestMatchers("/topics/create", "/topics/*/edit", "/topics/*/delete").authenticated()
                 .requestMatchers("/", "/login", "/login/error", "/register", "/topics", "/topics/**").permitAll()
                 // CSS, JS, 이미지 등 정적 리소스는 누구나 접근 가능
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
@@ -54,7 +55,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")     // 로그인 처리 URL (form action)
                 .usernameParameter("username")    // 로그인 폼의 username 필드 name
                 .passwordParameter("password")    // 로그인 폼의 password 필드 name
-                .defaultSuccessUrl("/topics", true)  // 로그인 성공 시 이동할 페이지
+                .defaultSuccessUrl("/", true)  // 로그인 성공 시 이동할 페이지
                 .failureForwardUrl("/login/error") // 로그인 실패 시 포워드 (URL 변경 없음)
                 .permitAll()                      // 로그인 페이지는 누구나 접근 가능
             )

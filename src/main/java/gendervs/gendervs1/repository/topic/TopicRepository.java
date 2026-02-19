@@ -19,12 +19,12 @@ public interface TopicRepository extends JpaRepository<Topic, Long>, TopicReposi
     // TopicRepositoryCustom의 메서드: findTopicsWithFilters (QueryDSL 구현)
 
     /**
-     * 논제 상세 조회 (UserProfile Fetch Join)
-     * - 1개의 쿼리로 Topic, UserProfile 조회
-     * - N+1 문제 방지
+     * - 작성자 본인 확인이 필요한 경우 사용 (논제 상세조회, 수정, 삭제)
+     * - loginId 비교를 위해 User까지 조회
      */
     @Query("SELECT t FROM Topic t " +
-           "JOIN FETCH t.userProfile " +
+           "JOIN FETCH t.userProfile up " +
+           "JOIN FETCH up.user " +
            "WHERE t.topicId = :topicId")
-    Optional<Topic> findByIdWithUserProfile(@Param("topicId") Long topicId);
+    Optional<Topic> findByIdWithUser(@Param("topicId") Long topicId);
 }

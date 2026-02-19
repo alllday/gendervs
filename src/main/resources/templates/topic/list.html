@@ -176,6 +176,14 @@
             margin-bottom: 15px;
         }
     </style>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorMessage = /*[[${errorMessage}]]*/ null;
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+    </script>
 </head>
 <body>
     <main layout:fragment="content">
